@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script src="sjcl.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  </head>
+  <body>
+    <p><b>PBKDF2 Defaults (password: password, salt: salt)</b></p>
+    <p id="pbkdf2_1"></p>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        var utf8 = sjcl.codec.utf8String;
+        var hex = sjcl.codec.hex;
+
+        var result_1 = new sjcl.misc.pbkdf2('password', 'salt', 0, 0);
+        console.log(result_1);
+        var parsed_1 = hex.fromBits(result_1);
+        $('#pbkdf2_1').text(parsed_1);
+      });
+    </script>
+  </body>
+</html>
