@@ -1,9 +1,10 @@
-"name" : "dart-pbkdf2"
+"name" : "pbkdf2"
 "version" : "0.1.0"
+"author" : "Robin Harper <cabrel@zerklabs.com>"
 "description" : "pbkdf2 description"
 "homepage" : "https://github.com/cabrel/dart-pbkdf2"
-"authors" : 
-  - "Robin Harper <cabrel@zerklabs.com>"
 "dependencies" : 
-  "crypto" : ">=0.9.0"
+  "crypto" : "any"
+  "fixnum" : ">=0.9.0"
   "utf" : ">=0.9.0"
+  "unittest" : ">=0.9.0"
