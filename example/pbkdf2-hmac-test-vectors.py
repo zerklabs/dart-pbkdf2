@@ -8,6 +8,7 @@ import hmac
 import struct
 import sys
 
+
 class prf:
     def __init__(self, digest):
         self.digest      = digest
@@ -31,16 +32,20 @@ def xor(A, B):
 def pbkdf2(P, S, c, dkLen, PRF):
     hLen = PRF.digest_size
 
+    print_int('len', (2**32 - 1) * hLen)
+
     if dkLen > (2**32 - 1) * hLen:
         raise Exception('derived key too long')
 
     l = -(-dkLen // hLen)
     r = dkLen - (l - 1) * hLen
 
+    print_int('r', r)
+    print_int('l', l)
+
     def F(i):
         def U():
             U = S + INT(i)
-            print_hex('U', U);
             for j in range(c):
                 U = PRF(P, U)
                 yield U
@@ -83,6 +88,8 @@ def test(P, S, c, dkLen, PRF):
     print
 
 
+xorcalled = 0
+
 if __name__ == '__main__':
     def usage():
         sys.exit('%s [-b 20] sha1 sha256 ...' % sys.argv[0])
@@ -106,9 +113,9 @@ if __name__ == '__main__':
         PRF = prf(hashlib.new(name).copy)
         block = opt_b or PRF.digest_size
 
-        test("password", "salt", 1,        block, PRF)
-        test("password", "salt", 2,        block, PRF)
-        #test("password", "salt", 4096,     block, PRF)
+        # test("password", "salt", 1,        block, PRF)
+        # test("password", "salt", 2,        block, PRF)
+        test("password", "salt", 4096,     block, PRF)
         #test("password", "salt", 16777216, block, PRF)
         #test("passwordPASSWORDpassword",
         #     "saltSALTsaltSALTsaltSALTsaltSALTsalt", 4096, block // 4 * 5, PRF)

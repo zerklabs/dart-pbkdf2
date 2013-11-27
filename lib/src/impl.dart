@@ -1,62 +1,53 @@
 part of pbkdf2;
 
 class Pbkdf2 {
-// def INT(i):
-//     assert i > 0
-//     return struct.pack('>I', i)
 
-// def xor(A, B):
-//     return ''.join([chr(ord(a) ^ ord(b)) for a, b in zip(A, B)])
+  // default hash function
+  SHA256 hash = new SHA256();
 
-  // def pbkdf2(P, S, c, dkLen, PRF):
-  //   hLen = PRF.digest_size
-
-  //   if dkLen > (2**32 - 1) * hLen:
-  //       raise Exception('derived key too long')
-
-  //   l = -(-dkLen // hLen)
-  //   r = dkLen - (l - 1) * hLen
-
-  //   def F(i):
-  //       def U():
-  //           U = S + INT(i)
-  //           for j in range(c):
-  //               U = PRF(P, U)
-  //               yield U
-
-  //       return reduce(xor, U())
-
-  //   T = map(F, range(1, l+1))
-
-  //   DK = ''.join(T[:-1]) + T[-1][:r]
-  //   return DK
-
-  List<num> toBytes(var input) {
-    var bytes = new List<num>();
+  List<int> toBytes(var input) {
+    var bytes = new List<int>();
 
     for(var i = 0; i < input.length; i++) {
-      if(input[i] is num) {
-        bytes.add(input[i].toRadixString(16));
+      int x;
+
+      if(input[i] is int) {
+        x = input[i].toRadixString(16);
       } else if(input[i] is String) {
-        bytes.add(input.codeUnitAt(i).toRadixString(16));
+        x = input.codeUnitAt(i).toRadixString(16);
       }
+
+      bytes.add(x);
     }
 
     return bytes;
   }
 
-  List<int> PRF(List<int> password, List<int> salt) {
-    // default to SHA256
-    var hash = new SHA256();
-    var hmac = new HMAC(hash, password);
+  List<int> XOR(var a1, var a2) {
+    var result = new List<int>();
+    var comb = new IterableZip([a1, a2]);
 
-    hmac.add(salt);
-
-    var result = hmac.close();
+    comb.forEach((i) {
+      result.add(i[0] ^ i[1]);
+    });
 
     return result;
   }
 
+  /**
+   *  Our pseudo-random function, taking in two byte arrays
+   *  and returning the HMAC processed result
+   */
+  List<int> PRF(var password, var salt) {
+    var hmac = new HMAC(hash, password);
+    hmac.add(salt);
+
+    return hmac.close();
+  }
+
+  /**
+   *  Convert an int to a 32-bit big-endian representation
+   */
   List<int> INT(int input) {
     var buffer = new List<int>();
     buffer.add((input >> 24) & 0xFF);
@@ -72,16 +63,20 @@ class Pbkdf2 {
       count = 1000; // default to some iteration
     }
 
-    if(count < 0 || length < 0) {
-      throw("invalid params to pbkdf2");
+    if(count <= 0) {
+      throw ArgumentError("Iterations must be greater than or equal to 1");
     }
 
-    if(length > (pow(2, 32) - 1) * 64) {
+    if(length <= 0) {
+      throw ArgumentError("Derived key length must be greater than or equal to 1");
+    }
+
+    // print(((pow(2, 32) - 1) * hash.newInstance().blockSize) ~/ 2);
+
+    if(length > ((pow(2, 32) - 1) * hash.blockSize) ~/ 2) {
       throw('derived key too long');
     }
 
-    // var passwordBits = toBytes(password);
-    // var saltBits = toBytes(salt);
     var passwordBits = new List<int>();
     var saltBits = new List<int>();
 
@@ -93,27 +88,33 @@ class Pbkdf2 {
       saltBits.add(i);
     });
 
-    // digest key
-    List<int> dk = new List<int>();
-
     // iterator
-    int l = -((-length / 64).floor());
-    int c = 0;
+    int l = -((-length / hash.blockSize).floor());
+    int c = 1;
     int k = 1;
 
+    var digest = new List<int>();
+
     for(k = 1; k < l + 1; k++) {
-      // a new collection to host salt + iterator
-      var salt_k_concat = new List<int>();
+      // round 1 derived key storage
+      var dk = new List<int>();
 
       // concat the iterator value
       dk.addAll(saltBits);
       dk.addAll(INT(k));
 
-      for(c = 0; c < count; c++) {
-        dk = PRF(passwordBits, dk);
+      digest = PRF(passwordBits, dk);
+      var previous = new List<int>();
+
+      // iterations - 1 since the
+      // first round was done above
+      for(c = 1; c < count; c++) {
+        previous = digest;
+        digest = PRF(passwordBits, digest);
+        digest = XOR(digest, previous);
       }
     }
 
-    return CryptoUtils.bytesToHex(dk);
+    return CryptoUtils.bytesToHex(digest);
   }
 }

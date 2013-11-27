@@ -8,3 +8,4 @@
   "fixnum" : ">=0.9.0"
   "utf" : ">=0.9.0"
   "unittest" : ">=0.9.0"
+  "sequence_zip" : ">=0.9.0"
