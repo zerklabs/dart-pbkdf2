@@ -40,6 +40,7 @@ def pbkdf2(P, S, c, dkLen, PRF):
     def F(i):
         def U():
             U = S + INT(i)
+            print_hex('U', U);
             for j in range(c):
                 U = PRF(P, U)
                 yield U

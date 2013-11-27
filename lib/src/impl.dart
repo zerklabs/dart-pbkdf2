@@ -31,21 +31,30 @@ class Pbkdf2 {
   //   DK = ''.join(T[:-1]) + T[-1][:r]
   //   return DK
 
+  List<num> toBytes(var input) {
+    var bytes = new List<num>();
+
+    for(var i = 0; i < input.length; i++) {
+      if(input[i] is num) {
+        bytes.add(input[i].toRadixString(16));
+      } else if(input[i] is String) {
+        bytes.add(input.codeUnitAt(i).toRadixString(16));
+      }
+    }
+
+    return bytes;
+  }
+
   List<int> PRF(List<int> password, List<int> salt) {
     // default to SHA256
     var hash = new SHA256();
     var hmac = new HMAC(hash, password);
-    var hmac1 = new HMAC(hash, password);
 
     hmac.add(salt);
 
-    var digest = hmac.close();
+    var result = hmac.close();
 
-    for(var j = 0; j < salt.length; j++) {
-      digest[j] ^= salt[j];
-    }
-
-    return digest;
+    return result;
   }
 
   List<int> INT(int input) {
@@ -67,16 +76,20 @@ class Pbkdf2 {
       throw("invalid params to pbkdf2");
     }
 
+    if(length > (pow(2, 32) - 1) * 64) {
+      throw('derived key too long');
+    }
+
+    // var passwordBits = toBytes(password);
+    // var saltBits = toBytes(salt);
     var passwordBits = new List<int>();
-    encodeUtf8(password).forEach((i) {
-      // passwordBits.addAll(INT(i));
+    var saltBits = new List<int>();
+
+    password.codeUnits.forEach((i) {
       passwordBits.add(i);
     });
 
-    var saltBits = new List<int>();
-
-    encodeUtf8(salt).forEach((i) {
-      // saltBits.addAll(INT(i));
+    salt.codeUnits.forEach((i) {
       saltBits.add(i);
     });
 
@@ -84,9 +97,11 @@ class Pbkdf2 {
     List<int> dk = new List<int>();
 
     // iterator
+    int l = -((-length / 64).floor());
+    int c = 0;
     int k = 1;
 
-    while(dk.length < length) {
+    for(k = 1; k < l + 1; k++) {
       // a new collection to host salt + iterator
       var salt_k_concat = new List<int>();
 
@@ -94,29 +109,11 @@ class Pbkdf2 {
       dk.addAll(saltBits);
       dk.addAll(INT(k));
 
-      for(var i = 0; i < count; i++) {
+      for(c = 0; c < count; c++) {
         dk = PRF(passwordBits, dk);
       }
-
-      k = k + 1;
-    }
-
-    if(dk.length > length) {
-      throw("digest key too large");
     }
 
     return CryptoUtils.bytesToHex(dk);
   }
-}
-
-main() {
-  var password = 'password';
-  var salt = 'salt';
-  var pbkdf2 = new Pbkdf2();
-
-  var hash = new SHA256();
-
-  var sha256_result_1_iter = pbkdf2.generate(password, salt, 1, 32);
-
-  print('SHA256 Hash (1 iteration): ${sha256_result_1_iter}, length: ${sha256_result_1_iter.length}');
 }
