@@ -2,16 +2,29 @@ part of pbkdf2;
 
 class Pbkdf2 {
 
-  // default hash function
-  SHA256 hash = new SHA256();
+  Hash hash;
   HMAC hmac;
+
+  // Constructor
+  //
+  // Hash can be any hash defined in the Crypto
+  // package (SHA1, SHA256, ...)
+  //
+  // If one is not explicitly given, then we default to SHA256
+  Pbkdf2([Hash hash]) {
+    if(hash != null) {
+      this.hash = hash;
+    } else {
+      this.hash = new SHA256();
+    }
+  }
 
   /**
    *  Our pseudo-random function, taking in two byte arrays
    *  and returning the HMAC processed result
    */
    List<int> PRF(var password, var salt) {
-     hmac = new HMAC(hash, password);
+     hmac = new HMAC(hash.newInstance(), password);
      hmac.add(salt);
 
      var res = hmac.close();
@@ -21,6 +34,8 @@ class Pbkdf2 {
    }
 
    String generate(String password, String salt, int count, int length) {
+     var hashLength = hash.newInstance().close().length;
+
      if(count == null || count == 0) {
        count = 1000; // default to some iteration
      }
@@ -33,7 +48,7 @@ class Pbkdf2 {
        throw ArgumentError("Derived key length must be greater than or equal to 1");
      }
 
-     if(length > ((pow(2, 32) - 1) * hash.blockSize) ~/ 2) {
+     if(length > ((pow(2, 32) - 1) * hashLength)) {
        throw('derived key too long');
      }
 
@@ -48,9 +63,9 @@ class Pbkdf2 {
        saltBits.add(i);
      });
 
-     var l = -(-length / (hash.blockSize ~/ 2)).floor();
-     var r = length - (l - 1) * (hash.blockSize ~/ 2);
-     // print('length: ${length}, l: ${l}, r: ${r}');
+     int l = -(-(length ~/ hashLength));
+     int r = length - (l - 1) * hashLength;
+     // print('r: ${r}, l: ${l}, length: ${length}, hash length: ${hashLength}');
 
      List<int> process(int i) {
        var dk = new List<int>();
@@ -75,16 +90,12 @@ class Pbkdf2 {
 
      // based on the number of cycles expected, defined by `l`
      // generate a list the size of `l` and populate it with [1, 2, ...]
-     var result = new List.generate(l, (int index) => index += 1).map(process);
-     var key = '';
+     var result = new List.generate(l + 1, (int index) => index += 1).map(process);
 
-     if(result.length == 1) {
-       key = CryptoUtils.bytesToHex(result.first).substring(0, length * 2);
-     } else {
-       var part1 = CryptoUtils.bytesToHex(result.first);
-       var part2 = CryptoUtils.bytesToHex(result.last).substring(0, r * l);
-       key = part1 + part2;
-     }
+     var key = CryptoUtils.bytesToHex(result.first);
+       if(key.length < length * 2) {
+         key += CryptoUtils.bytesToHex(result.last).substring(0, (r - hashLength) * 2);
+       }
 
        return key;
      }
