@@ -1,4 +1,4 @@
-"name" : "pbkdf2"
+"name" : "dart_pbkdf2"
 "version" : "0.1.0"
 "author" : "Robin Harper <cabrel@zerklabs.com>"
 "description" : "pbkdf2 description"
