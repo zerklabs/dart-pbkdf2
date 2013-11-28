@@ -6,7 +6,7 @@
 </head>
 <body>
 	<p>
-		All tests use a password of <b>password</b> and a salt of <b>d58d0de00ba9e82d7ba627c03e77f6e0451184af9888b135ec9d11d88a383fbe</b>
+		All tests use a password of <b>password</b> and a salt of <b>salt</b>
 	</p>
 	<table border="1">
     <thead>
@@ -28,7 +28,7 @@
       $(document).ready(function() {
         var hex = sjcl.codec.hex;
 
-        var result_1 = new sjcl.misc.pbkdf2('password', "d58d0de00ba9e82d7ba627c03e77f6e0451184af9888b135ec9d11d88a383fbe", 1000, 32 * 8);
+        var result_1 = new sjcl.misc.pbkdf2('password', 'salt', 10, 0);
         var parsed_1 = hex.fromBits(result_1);
         $('#pbkdf2_1').text(parsed_1);
         $('#pbkdf2_1_len').text(parsed_1.length);

@@ -26,22 +26,14 @@ void main() {
       expect(pbkdf2.generate(P, S, c, dkLen), 'ae4d0c95af6b46d32d0adff928f06dd02a303f8ef3c251dfd6e2d85a95474c43');
     });
 
+    test("Password = 'password' / Salt = 'salt' / Iterations = 8 / Derived Key Length = 32", () {
+      c = 8;
+      expect(pbkdf2.generate(P, S, c, dkLen), '1f9955fb8ad6bcfa119b911d41f540bfc153dbe244e41158e7fa5311c91cb1b7');
+    });
+
     test("Password = 'password' / Salt = 'salt' / Iterations = 4096 / Derived Key Length = 32", () {
       c = 4096;
       expect(pbkdf2.generate(P, S, c, dkLen), 'c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a');
     });
-  });
-
-  group("pbkdf2 utility functions", () {
-    var pbkdf2 = new Pbkdf2();
-
-    test("INT", () {
-      expect(pbkdf2.INT(1), [00, 00, 00, 01]);
-    });
-
-    test("toBytes", () {
-     expect(pbkdf2.toBytes('salt'), ['73', '61', '6c', '74']);
-    });
-
   });
 }

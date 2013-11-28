@@ -9,4 +9,5 @@ import 'package:fixnum/fixnum.dart';
 import 'package:utf/utf.dart';
 import 'package:sequence_zip/sequence_zip.dart';
 
+part 'src/utils.dart';
 part 'src/impl.dart';

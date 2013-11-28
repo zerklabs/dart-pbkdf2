@@ -4,58 +4,20 @@ class Pbkdf2 {
 
   // default hash function
   SHA256 hash = new SHA256();
-
-  List<int> toBytes(var input) {
-    var bytes = new List<int>();
-
-    for(var i = 0; i < input.length; i++) {
-      int x;
-
-      if(input[i] is int) {
-        x = input[i].toRadixString(16);
-      } else if(input[i] is String) {
-        x = input.codeUnitAt(i).toRadixString(16);
-      }
-
-      bytes.add(x);
-    }
-
-    return bytes;
-  }
-
-  List<int> XOR(var a1, var a2) {
-    var result = new List<int>();
-    var comb = new IterableZip([a1, a2]);
-
-    comb.forEach((i) {
-      result.add(i[0] ^ i[1]);
-    });
-
-    return result;
-  }
+  HMAC hmac;
 
   /**
    *  Our pseudo-random function, taking in two byte arrays
    *  and returning the HMAC processed result
    */
   List<int> PRF(var password, var salt) {
-    var hmac = new HMAC(hash, password);
+    hmac = new HMAC(hash, password);
     hmac.add(salt);
 
-    return hmac.close();
-  }
+    var res = hmac.close();
+    // print('Digest: ${CryptoUtils.bytesToHex(toBytes(res))}');
 
-  /**
-   *  Convert an int to a 32-bit big-endian representation
-   */
-  List<int> INT(int input) {
-    var buffer = new List<int>();
-    buffer.add((input >> 24) & 0xFF);
-    buffer.add((input >> 16) & 0xFF);
-    buffer.add((input >> 8) & 0xFF);
-    buffer.add(input & 0xFF);
-
-    return buffer;
+    return res;
   }
 
   String generate(String password, String salt, int count, int length) {
@@ -94,27 +56,27 @@ class Pbkdf2 {
     int k = 1;
 
     var digest = new List<int>();
+    var dk = new List<int>();
+    var lastDigest = new List<int>();
 
     for(k = 1; k < l + 1; k++) {
-      // round 1 derived key storage
-      var dk = new List<int>();
-
       // concat the iterator value
       dk.addAll(saltBits);
-      dk.addAll(INT(k));
+      dk.addAll(toInt32Be(k));
 
-      digest = PRF(passwordBits, dk);
-      var previous = new List<int>();
+      dk = PRF(passwordBits, dk);
+      lastDigest = new List<int>.from(dk);
 
       // iterations - 1 since the
       // first round was done above
       for(c = 1; c < count; c++) {
-        previous = digest;
-        digest = PRF(passwordBits, digest);
-        digest = XOR(digest, previous);
+        dk = new List<int>.from(PRF(passwordBits, dk));
+        lastDigest = XOR(lastDigest, dk);
       }
+
+      dk = lastDigest;
     }
 
-    return CryptoUtils.bytesToHex(digest);
+    return CryptoUtils.bytesToHex(dk);
   }
 }

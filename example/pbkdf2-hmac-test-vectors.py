@@ -24,6 +24,9 @@ def INT(i):
 
 def xor(A, B):
     x = ''.join([chr(ord(a) ^ ord(b)) for a, b in zip(A, B)])
+    # print_hex('A', A)
+    # print_hex('B', B)
+    # print_hex('xor U', x)
     return x
 
 
@@ -48,9 +51,12 @@ def pbkdf2(P, S, c, dkLen, PRF):
             U = S + INT(i)
             for j in range(c):
                 U = PRF(P, U)
+                print_hex('U', U)
                 yield U
 
-        return reduce(xor, U())
+        x = reduce(xor, U())
+        print_hex('x', x)
+        return x
 
     T = map(F, range(1, l+1))
 
@@ -115,7 +121,8 @@ if __name__ == '__main__':
 
         # test("password", "salt", 1,        block, PRF)
         # test("password", "salt", 2,        block, PRF)
-        test("password", "salt", 4096,     block, PRF)
+        test("password", "salt", 8,     block, PRF)
+        # test("password", "salt", 4096,     block, PRF)
         #test("password", "salt", 16777216, block, PRF)
         #test("passwordPASSWORDpassword",
         #     "saltSALTsaltSALTsaltSALTsaltSALTsalt", 4096, block // 4 * 5, PRF)
