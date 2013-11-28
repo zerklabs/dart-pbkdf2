@@ -4,7 +4,7 @@
 "description" : "pbkdf2 description"
 "homepage" : "https://github.com/cabrel/dart-pbkdf2"
 "dependencies" : 
-  "crypto" : "any"
+  "crypto" : ">=0.9.0"
   "fixnum" : ">=0.9.0"
   "utf" : ">=0.9.0"
   "unittest" : ">=0.9.0"
