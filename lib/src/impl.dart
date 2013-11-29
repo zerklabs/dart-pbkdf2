@@ -14,10 +14,10 @@ class Pbkdf2 {
   Pbkdf2([Hash hash]) {
     if(hash != null) {
       this.hash = hash;
-    } else {
-      this.hash = new SHA256();
+      } else {
+        this.hash = new SHA256();
+      }
     }
-  }
 
   /**
    *  Our pseudo-random function, taking in two byte arrays
@@ -34,6 +34,8 @@ class Pbkdf2 {
    }
 
    String generate(String password, String salt, int count, int length) {
+     Stopwatch stopwatch = new Stopwatch()..start();
+
      var hashLength = hash.newInstance().close().length;
 
      if(count == null || count == 0) {
@@ -57,11 +59,11 @@ class Pbkdf2 {
 
      password.codeUnits.forEach((i) {
        passwordBits.add(i);
-     });
+       });
 
      salt.codeUnits.forEach((i) {
        saltBits.add(i);
-     });
+       });
 
      int l = -(-(length ~/ hashLength));
      int r = length - (l - 1) * hashLength;
@@ -93,10 +95,12 @@ class Pbkdf2 {
      var result = new List.generate(l + 1, (int index) => index += 1).map(process);
 
      var key = CryptoUtils.bytesToHex(result.first);
-       if(key.length < length * 2) {
-         key += CryptoUtils.bytesToHex(result.last).substring(0, (r - hashLength) * 2);
-       }
-
-       return key;
+     if(key.length < length * 2) {
+       key += CryptoUtils.bytesToHex(result.last).substring(0, (r - hashLength) * 2);
      }
+
+     stopwatch.stop();
+     print('generate(${count}, ${length}) took ${stopwatch.elapsedMilliseconds / 1000} seconds (${stopwatch.elapsedMilliseconds} ms)');
+     return key;
    }
+ }

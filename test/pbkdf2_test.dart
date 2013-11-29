@@ -284,6 +284,26 @@ void testUtils() {
 
 }
 
+
+//
+// Quad-core i7 @ 2.80Ghz
+//
+// SHA256
+// generate took 0.006 seconds (6 ms) (c = 1)
+// generate took 0.006 seconds (6 ms) (c = 2)
+// generate took 0.184 seconds (184 ms) (c = 4096)
+// generate took 0.265 seconds (265 ms) (c = 4096, dkLen = 40)
+// generate took 0.133 seconds (133 ms) (c = 4096, dkLen = 16)
+// generate took 569.227 seconds (569227 ms) (c = 16777216)
+//
+// SHA1
+// generate took 0.004 seconds (4 ms) (c = 1)
+// generate took 0.002 seconds (2 ms) (c = 2)
+// generate took 0.573 seconds (573 ms) (c = 4096, dkLen = 25)
+// generate took 0.162 seconds (162 ms) (c = 4096)
+// generate took 0.078 seconds (78 ms) (c = 4096, dkLen = 16)
+// generate took 333.583 seconds (333583 ms) (c = 16777216)
+
 void main() {
   useVMConfiguration();
   unittestConfiguration.useColor = true;

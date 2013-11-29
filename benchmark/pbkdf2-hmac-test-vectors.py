@@ -34,11 +34,7 @@ def pbkdf2(P, S, c, dkLen, PRF):
     if dkLen > (2**32 - 1) * hLen:
         raise Exception('derived key too long')
 
-    print_int('hLen', hLen)
-    print_int('-dkLen', -dkLen)
-    print_int('-dkLen//hLen', -dkLen//hLen)
     l = -(-dkLen // hLen)
-    print_int('l', l)
     r = dkLen - (l - 1) * hLen
 
     def F(i):
@@ -113,7 +109,7 @@ if __name__ == '__main__':
         test("password", "salt", 1,        block, PRF)
         test("password", "salt", 2,        block, PRF)
         test("password", "salt", 4096,     block, PRF)
-        # test("password", "salt", 16777216, block, PRF)
+        test("password", "salt", 16777216, block, PRF)
         test("passwordPASSWORDpassword",
             "saltSALTsaltSALTsaltSALTsaltSALTsalt", 4096, block // 4 * 5, PRF)
         test("pass\0word", "sa\0lt",                 4096, 16, PRF)
