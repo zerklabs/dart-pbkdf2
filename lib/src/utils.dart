@@ -49,23 +49,6 @@ List<int> toBytes(var input) {
 /**
  *
  */
-List<int> XOR(var A, var B) {
-  // print('A: ${CryptoUtils.bytesToHex(A)}');
-  // print('B: ${CryptoUtils.bytesToHex(B)}');
-  var result = new List<int>(A.length);
-  var comb = new IterableZip([A, B]);
-
-  for(var x = 0; x < result.length; x++) {
-    var e = comb.elementAt(x);
-    result[x] = toBytes(e[0] ^ e[1])[0];
-  }
-
-  return result;
-}
-
-/**
- *
- */
 String replace(String input) {
   print('Input before: ${input}');
 

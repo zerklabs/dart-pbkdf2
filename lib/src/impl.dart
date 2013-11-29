@@ -2,6 +2,9 @@ part of pbkdf2;
 
 class Pbkdf2 {
 
+  // flag to control print statements
+  bool enableDebugging = false;
+
   Hash hash;
   HMAC hmac;
 
@@ -14,21 +17,56 @@ class Pbkdf2 {
   Pbkdf2([Hash hash]) {
     if(hash != null) {
       this.hash = hash;
-      } else {
-        this.hash = new SHA256();
-      }
+    } else {
+      this.hash = new SHA256();
     }
+  }
+
+  /**
+   *
+   */
+  List<int> XOR(var A, var B) {
+    Stopwatch stopwatch = new Stopwatch()..start();
+
+    var result = new List<int>(A.length);
+    var comb = new IterableZip([A, B]);
+
+    for(var x = 0; x < result.length; x++) {
+      var e = comb.elementAt(x);
+      result[x] = toBytes(e[0] ^ e[1])[0];
+    }
+
+     stopwatch.stop();
+
+     if(enableDebugging) {
+       if(stopwatch.elapsedMilliseconds > 0.01) {
+         print('XOR took ${stopwatch.elapsedMilliseconds / 1000} seconds (${stopwatch.elapsedMilliseconds} ms)');
+       }
+     }
+
+    return result;
+  }
 
   /**
    *  Our pseudo-random function, taking in two byte arrays
    *  and returning the HMAC processed result
    */
    List<int> PRF(var password, var salt) {
+     Stopwatch stopwatch = new Stopwatch()..start();
+
      hmac = new HMAC(hash.newInstance(), password);
      hmac.add(salt);
 
      var res = hmac.close();
      // print('Digest: ${CryptoUtils.bytesToHex(toBytes(res))}');
+
+     stopwatch.stop();
+
+     if(enableDebugging) {
+       if(stopwatch.elapsedMilliseconds > 0.01) {
+         print('PRF took ${stopwatch.elapsedMilliseconds / 1000} seconds (${stopwatch.elapsedMilliseconds} ms)');
+       }
+     }
 
      return res;
    }
@@ -67,7 +105,10 @@ class Pbkdf2 {
 
      int l = -(-(length ~/ hashLength));
      int r = length - (l - 1) * hashLength;
-     // print('r: ${r}, l: ${l}, length: ${length}, hash length: ${hashLength}');
+
+     if(enableDebugging) {
+       print('r: ${r}, l: ${l}, length: ${length}, hash length: ${hashLength}');
+     }
 
      List<int> process(int i) {
        var dk = new List<int>();
@@ -100,7 +141,9 @@ class Pbkdf2 {
      }
 
      stopwatch.stop();
-     print('generate(${count}, ${length}) took ${stopwatch.elapsedMilliseconds / 1000} seconds (${stopwatch.elapsedMilliseconds} ms)');
+     if(enableDebugging) {
+       print('generate(${count}, ${length}) took ${stopwatch.elapsedMilliseconds / 1000} seconds (${stopwatch.elapsedMilliseconds} ms)');
+     }
      return key;
    }
  }

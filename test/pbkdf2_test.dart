@@ -31,6 +31,8 @@ const TEST_VECTOR_SHA1_HASHES = const {
 void testLongRunningSHA256Vectors() {
   test("16,777,216 Iterations", () {
     var pbkdf2 = new Pbkdf2();
+    pbkdf2.enableDebugging = true;
+
     String P = 'password';
     String S = 'salt';
     String c = 16777216;
@@ -155,6 +157,8 @@ void testStandardSHA256Vectors() {
 void testLongRunningSHA1Vectors() {
   test("16,777,216 Iterations", () {
     var pbkdf2 = new Pbkdf2(new SHA1());
+    pbkdf2.enableDebugging = true;
+
     String P = 'password';
     String S = 'salt';
     String c = 16777216;
