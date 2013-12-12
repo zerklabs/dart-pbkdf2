@@ -1,8 +1,6 @@
 part of pbkdf2;
 
-/**
- *
- */
+// convert input to radix string
 List<int> toRadixBytes(var input) {
   var bytes = new List<int>();
 
@@ -52,15 +50,11 @@ List<int> toBytes(var input) {
 String replace(String input) {
   print('Input before: ${input}');
 
-  if(input.contains(r'\0')) {
-    var index = input.indexOf(r'\0');
-    var replacement = '';
-    if(index == 0) {
-      replacement = r'\u0000' + input.substring(1, input.length - 1);
-    } else {
-      replacement = input.substring(0, index) + r'\u{0000}' + input.substring(index + 2, input.length);
-    }
+  var index = input.indexOf(r'\0');
+  String replacement;
 
+  if(index > -1) {
+    replacement = input.replaceFirst(r'\0', '\u{0000}');
     print('Input after: ${replacement}');
     print(encodeUtf8(replacement));
 

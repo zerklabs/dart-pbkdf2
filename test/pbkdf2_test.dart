@@ -31,7 +31,7 @@ const TEST_VECTOR_SHA1_HASHES = const {
 void testLongRunningSHA256Vectors() {
   test("16,777,216 Iterations", () {
     var pbkdf2 = new Pbkdf2();
-    pbkdf2.enableDebugging = true;
+    // pbkdf2.enableDebugging = true;
 
     String P = 'password';
     String S = 'salt';
@@ -54,6 +54,7 @@ void testLongRunningSHA256Vectors() {
 void testStandardSHA256Vectors() {
   test("1 Iteration", () {
     var pbkdf2 = new Pbkdf2();
+    // pbkdf2.enableDebugging = true;
     String P = 'password';
     String S = 'salt';
     String c = 1;
@@ -74,6 +75,7 @@ void testStandardSHA256Vectors() {
 
   test("2 Iterations", () {
     var pbkdf2 = new Pbkdf2();
+    // pbkdf2.enableDebugging = true;
     String P = 'password';
     String S = 'salt';
     String c = 2;
@@ -94,6 +96,7 @@ void testStandardSHA256Vectors() {
 
   test("4096 Iterations", () {
     var pbkdf2 = new Pbkdf2();
+    // pbkdf2.enableDebugging = true;
     String P = 'password';
     String S = 'salt';
     String c = 4096;
@@ -114,6 +117,7 @@ void testStandardSHA256Vectors() {
 
   test("4096 Iterations, Derived Key Length = 40", () {
     var pbkdf2 = new Pbkdf2();
+    // pbkdf2.enableDebugging = true;
     String P = 'passwordPASSWORDpassword';
     String S = 'saltSALTsaltSALTsaltSALTsaltSALTsalt';
     String c = 4096;
@@ -136,8 +140,9 @@ void testStandardSHA256Vectors() {
      */
     test("4096 Iterations, Derived Key Length = 16", () {
       var pbkdf2 = new Pbkdf2();
-      String P = 'pass\\0word';
-      String S = 'sa\\0lt';
+    // pbkdf2.enableDebugging = true;
+      String P = 'pass\u{0000}word';
+      String S = 'sa\u{0000}lt';
       String c = 4096;
       String dkLen = 16;
       var key = pbkdf2.generate(P, S, c, dkLen);
@@ -157,7 +162,7 @@ void testStandardSHA256Vectors() {
 void testLongRunningSHA1Vectors() {
   test("16,777,216 Iterations", () {
     var pbkdf2 = new Pbkdf2(new SHA1());
-    pbkdf2.enableDebugging = true;
+    // pbkdf2.enableDebugging = true;
 
     String P = 'password';
     String S = 'salt';
@@ -180,6 +185,7 @@ void testLongRunningSHA1Vectors() {
 void testStandardSHA1Vectors() {
   test("1 Iteration", () {
     var pbkdf2 = new Pbkdf2(new SHA1());
+    // pbkdf2.enableDebugging = true;
     String P = 'password';
     String S = 'salt';
     String c = 1;
@@ -199,6 +205,7 @@ void testStandardSHA1Vectors() {
 
   test("2 Iterations", () {
     var pbkdf2 = new Pbkdf2(new SHA1());
+    // pbkdf2.enableDebugging = true;
     String P = 'password';
     String S = 'salt';
     String c = 2;
@@ -218,6 +225,7 @@ void testStandardSHA1Vectors() {
 
   test("4096 Iterations", () {
     var pbkdf2 = new Pbkdf2(new SHA1());
+    // pbkdf2.enableDebugging = true;
     String P = 'password';
     String S = 'salt';
     String c = 4096;
@@ -237,6 +245,7 @@ void testStandardSHA1Vectors() {
 
   test("4096 Iterations, Derived Key Length = 25", () {
     var pbkdf2 = new Pbkdf2(new SHA1());
+    // pbkdf2.enableDebugging = true;
     String P = 'passwordPASSWORDpassword';
     String S = 'saltSALTsaltSALTsaltSALTsaltSALTsalt';
     String c = 4096;
@@ -259,8 +268,11 @@ void testStandardSHA1Vectors() {
      */
     test("4096 Iterations, Derived Key Length = 16", () {
       var pbkdf2 = new Pbkdf2(new SHA1());
-      String P = 'pass\\0word';
-      String S = 'sa\\0lt';
+
+      // pbkdf2.enableDebugging = true;
+
+      String P = 'pass\u{0000}word';
+      String S = 'sa\u{0000}lt';
       String c = 4096;
       String dkLen = 16;
       var key = pbkdf2.generate(P, S, c, dkLen);
@@ -318,11 +330,13 @@ void main() {
 
   group("PBKDF2-HMAC-SHA256 Test Vectors:", () {
     testStandardSHA256Vectors();
-    // testLongRunningSHA256Vectors();
+    // print('Long running tests for SHA256 are disabled');
+    testLongRunningSHA256Vectors();
   });
 
   group("PBKDF2-HMAC-SHA1 Test Vectors:", () {
     testStandardSHA1Vectors();
-    // testLongRunningSHA1Vectors();
+    // print('Long running tests for SHA1 are disabled');
+    testLongRunningSHA1Vectors();
   });
 }

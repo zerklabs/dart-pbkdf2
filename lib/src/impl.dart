@@ -136,8 +136,15 @@ class Pbkdf2 {
      var result = new List.generate(l + 1, (int index) => index += 1).map(process);
 
      var key = CryptoUtils.bytesToHex(result.first);
+
      if(key.length < length * 2) {
-       key += CryptoUtils.bytesToHex(result.last).substring(0, (r - hashLength) * 2);
+       if(result.length > 1) {
+         key += CryptoUtils.bytesToHex(result.last).substring(0, (r - hashLength) * 2);
+       }
+     } else if (key.length > length) {
+       if(result.length == 1) {
+         key = key.substring(0, length * 2);
+       }
      }
 
      stopwatch.stop();
