@@ -22,7 +22,7 @@ var key = pbkdf2.generate(Password, Salt, iterations, derived_key_length);
 ## Tests:
 
 ```
-dart test/pbkdf2_test.dart
+make test
 ```
 
 

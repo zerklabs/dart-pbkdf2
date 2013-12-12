@@ -271,8 +271,8 @@ void testStandardSHA1Vectors() {
 
       // pbkdf2.enableDebugging = true;
 
-      String P = 'pass\u{0000}word';
-      String S = 'sa\u{0000}lt';
+      String P = r'pass\0word';
+      String S = r'sa\0lt';
       String c = 4096;
       String dkLen = 16;
       var key = pbkdf2.generate(P, S, c, dkLen);
@@ -330,13 +330,13 @@ void main() {
 
   group("PBKDF2-HMAC-SHA256 Test Vectors:", () {
     testStandardSHA256Vectors();
-    // print('Long running tests for SHA256 are disabled');
-    testLongRunningSHA256Vectors();
+    print('Long running tests for SHA256 are disabled');
+    // testLongRunningSHA256Vectors();
   });
 
   group("PBKDF2-HMAC-SHA1 Test Vectors:", () {
     testStandardSHA1Vectors();
-    // print('Long running tests for SHA1 are disabled');
-    testLongRunningSHA1Vectors();
+    print('Long running tests for SHA1 are disabled');
+    // testLongRunningSHA1Vectors();
   });
 }

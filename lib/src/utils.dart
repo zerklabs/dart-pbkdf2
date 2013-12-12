@@ -49,12 +49,14 @@ List<int> toBytes(var input) {
  */
 String replace(String input) {
   print('Input before: ${input}');
-
   var index = input.indexOf(r'\0');
-  String replacement;
 
   if(index > -1) {
-    replacement = input.replaceFirst(r'\0', '\u{0000}');
+    String replacement = input.replaceFirst(r'\0', '\u{0000}');
+    // var firstHalf = input.substring(0, index - 1);
+    // var lastHalf = input.substring(index, input.length - 1);
+
+    // replacement = "${firstHalf}\u{0000}${lastHalf}";
     print('Input after: ${replacement}');
     print(encodeUtf8(replacement));
 

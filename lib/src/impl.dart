@@ -92,6 +92,8 @@ class Pbkdf2 {
        throw('derived key too long');
      }
 
+     password = replace(password);
+     salt = replace(salt);
      var passwordBits = new List<int>();
      var saltBits = new List<int>();
 
