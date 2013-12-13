@@ -22,9 +22,8 @@ class Pbkdf2 {
     }
   }
 
-  /**
-   *
-   */
+  // XOR's each value in the first list (A) with the value in the same
+  // position in the second list (B)
   List<int> XOR(var A, var B) {
     Stopwatch stopwatch = new Stopwatch()..start();
 
@@ -47,10 +46,8 @@ class Pbkdf2 {
     return result;
   }
 
-  /**
-   *  Our pseudo-random function, taking in two byte arrays
-   *  and returning the HMAC processed result
-   */
+   /// Our pseudo-random function, taking in two byte arrays
+   /// and returning the HMAC processed result
    List<int> PRF(var password, var salt) {
      Stopwatch stopwatch = new Stopwatch()..start();
 
@@ -58,7 +55,6 @@ class Pbkdf2 {
      hmac.add(salt);
 
      var res = hmac.close();
-     // print('Digest: ${CryptoUtils.bytesToHex(toBytes(res))}');
 
      stopwatch.stop();
 
@@ -71,39 +67,48 @@ class Pbkdf2 {
      return res;
    }
 
-   String generate(String password, String salt, int count, int length) {
-     Stopwatch stopwatch = new Stopwatch()..start();
 
+    /// The [password] and [salt] can be either Strings or Lists<int> (of bytes)
+    ///
+    /// If no count is given, we default to 1000
+   String generate(var password, var salt, int count, int length) {
+     Stopwatch stopwatch = new Stopwatch()..start();
      var hashLength = hash.newInstance().close().length;
+
+     List<int> passwordBits;
+     List<int> saltBits;
 
      if(count == null || count == 0) {
        count = 1000; // default to some iteration
      }
 
      if(count <= 0) {
-       throw ArgumentError("Iterations must be greater than or equal to 1");
+       throw new ArgumentError("Iterations must be greater than or equal to 1");
      }
 
      if(length <= 0) {
-       throw ArgumentError("Derived key length must be greater than or equal to 1");
+       throw new ArgumentError("Derived key length must be greater than or equal to 1");
      }
 
      if(length > ((pow(2, 32) - 1) * hashLength)) {
        throw('derived key too long');
      }
 
-     password = replace(password);
-     salt = replace(salt);
-     var passwordBits = new List<int>();
-     var saltBits = new List<int>();
+     if(password is List<int>) {
+       passwordBits = encodeUtf8(replace(decodeUtf8(password)));
+     } else if(password is String) {
+       passwordBits = encodeUtf8(replace(password));
+     } else {
+       throw new ArgumentError("Invalid type for [password]");
+     }
 
-     password.codeUnits.forEach((i) {
-       passwordBits.add(i);
-       });
-
-     salt.codeUnits.forEach((i) {
-       saltBits.add(i);
-       });
+     if(salt is List<int>) {
+       saltBits = encodeUtf8(replace(decodeUtf8(salt)));
+     } else if(salt is String) {
+       saltBits = encodeUtf8(replace(salt));
+     } else {
+       throw new ArgumentError("Invalid type for [salt]");
+     }
 
      int l = -(-(length ~/ hashLength));
      int r = length - (l - 1) * hashLength;
