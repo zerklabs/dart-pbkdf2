@@ -71,7 +71,26 @@ class Pbkdf2 {
      return res;
    }
 
-   String generate(String password, String salt, int count, int length) {
+
+   String generateFromString(String password, String salt, int count, int length) {
+      var passwordBits = new List<int>();
+      var saltBits = new List<int>();
+
+      password  = replace(password);
+      salt      = replace(salt);
+
+      password.codeUnits.forEach((i) {
+        passwordBits.add(i);
+      });
+
+      salt.codeUnits.forEach((i) {
+        saltBits.add(i);
+      });
+
+      return generate(passwordBits, saltBits, count, length);
+   }
+
+   String generate(List<int> passwordBits, List<int> saltBits, int count, int length) {
      Stopwatch stopwatch = new Stopwatch()..start();
 
      var hashLength = hash.newInstance().close().length;
@@ -81,29 +100,16 @@ class Pbkdf2 {
      }
 
      if(count <= 0) {
-       throw ArgumentError("Iterations must be greater than or equal to 1");
+       throw new ArgumentError("Iterations must be greater than or equal to 1");
      }
 
      if(length <= 0) {
-       throw ArgumentError("Derived key length must be greater than or equal to 1");
+       throw new ArgumentError("Derived key length must be greater than or equal to 1");
      }
 
      if(length > ((pow(2, 32) - 1) * hashLength)) {
        throw('derived key too long');
      }
-
-     password = replace(password);
-     salt = replace(salt);
-     var passwordBits = new List<int>();
-     var saltBits = new List<int>();
-
-     password.codeUnits.forEach((i) {
-       passwordBits.add(i);
-       });
-
-     salt.codeUnits.forEach((i) {
-       saltBits.add(i);
-       });
 
      int l = -(-(length ~/ hashLength));
      int r = length - (l - 1) * hashLength;

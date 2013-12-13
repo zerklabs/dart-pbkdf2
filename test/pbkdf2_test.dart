@@ -37,7 +37,7 @@ void testLongRunningSHA256Vectors() {
     String S = 'salt';
     String c = 16777216;
     String dkLen = 32;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -66,7 +66,7 @@ void testStandardSHA256Vectors() {
     // logMessage('\tc = ${c}');
     // logMessage('\tdkLen = ${dkLen}');
 
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
     // logMessage('Output');
     // logMessage('\tDK = ${key}');
 
@@ -87,7 +87,7 @@ void testStandardSHA256Vectors() {
     // logMessage('\tc = ${c}');
     // logMessage('\tdkLen = ${dkLen}');
 
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
     // logMessage('Output');
     // logMessage('\tDK = ${key}');
 
@@ -101,7 +101,7 @@ void testStandardSHA256Vectors() {
     String S = 'salt';
     String c = 4096;
     String dkLen = 32;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -122,7 +122,7 @@ void testStandardSHA256Vectors() {
     String S = 'saltSALTsaltSALTsaltSALTsaltSALTsalt';
     String c = 4096;
     String dkLen = 40;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -145,7 +145,7 @@ void testStandardSHA256Vectors() {
       String S = 'sa\u{0000}lt';
       String c = 4096;
       String dkLen = 16;
-      var key = pbkdf2.generate(P, S, c, dkLen);
+      var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
       // logMessage('Input');
       // logMessage('\tPassword = ${P}');
@@ -168,7 +168,7 @@ void testLongRunningSHA1Vectors() {
     String S = 'salt';
     String c = 16777216;
     String dkLen = 20;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -190,7 +190,7 @@ void testStandardSHA1Vectors() {
     String S = 'salt';
     String c = 1;
     String dkLen = 20;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -210,7 +210,7 @@ void testStandardSHA1Vectors() {
     String S = 'salt';
     String c = 2;
     String dkLen = 20;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -230,7 +230,7 @@ void testStandardSHA1Vectors() {
     String S = 'salt';
     String c = 4096;
     String dkLen = 20;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -250,7 +250,7 @@ void testStandardSHA1Vectors() {
     String S = 'saltSALTsaltSALTsaltSALTsaltSALTsalt';
     String c = 4096;
     String dkLen = 25;
-    var key = pbkdf2.generate(P, S, c, dkLen);
+    var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
     // logMessage('Input');
     // logMessage('\tPassword = ${P}');
@@ -275,7 +275,7 @@ void testStandardSHA1Vectors() {
       String S = r'sa\0lt';
       String c = 4096;
       String dkLen = 16;
-      var key = pbkdf2.generate(P, S, c, dkLen);
+      var key = pbkdf2.generateFromString(P, S, c, dkLen);
 
       // logMessage('Input');
       // logMessage('\tPassword = ${P}');
@@ -305,20 +305,20 @@ void testUtils() {
 // Quad-core i7 @ 2.80Ghz
 //
 // SHA256
-// generate took 0.006 seconds (6 ms) (c = 1)
-// generate took 0.006 seconds (6 ms) (c = 2)
-// generate took 0.184 seconds (184 ms) (c = 4096)
-// generate took 0.265 seconds (265 ms) (c = 4096, dkLen = 40)
-// generate took 0.133 seconds (133 ms) (c = 4096, dkLen = 16)
-// generate took 569.227 seconds (569227 ms) (c = 16777216)
+// generateFromString took 0.006 seconds (6 ms) (c = 1)
+// generateFromString took 0.006 seconds (6 ms) (c = 2)
+// generateFromString took 0.184 seconds (184 ms) (c = 4096)
+// generateFromString took 0.265 seconds (265 ms) (c = 4096, dkLen = 40)
+// generateFromString took 0.133 seconds (133 ms) (c = 4096, dkLen = 16)
+// generateFromString took 569.227 seconds (569227 ms) (c = 16777216)
 //
 // SHA1
-// generate took 0.004 seconds (4 ms) (c = 1)
-// generate took 0.002 seconds (2 ms) (c = 2)
-// generate took 0.573 seconds (573 ms) (c = 4096, dkLen = 25)
-// generate took 0.162 seconds (162 ms) (c = 4096)
-// generate took 0.078 seconds (78 ms) (c = 4096, dkLen = 16)
-// generate took 333.583 seconds (333583 ms) (c = 16777216)
+// generateFromString took 0.004 seconds (4 ms) (c = 1)
+// generateFromString took 0.002 seconds (2 ms) (c = 2)
+// generateFromString took 0.573 seconds (573 ms) (c = 4096, dkLen = 25)
+// generateFromString took 0.162 seconds (162 ms) (c = 4096)
+// generateFromString took 0.078 seconds (78 ms) (c = 4096, dkLen = 16)
+// generateFromString took 333.583 seconds (333583 ms) (c = 16777216)
 
 void main() {
   useVMConfiguration();
