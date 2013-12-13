@@ -100,11 +100,11 @@ class Pbkdf2 {
      }
 
      if(count <= 0) {
-       throw ArgumentError("Iterations must be greater than or equal to 1");
+       throw new ArgumentError("Iterations must be greater than or equal to 1");
      }
 
      if(length <= 0) {
-       throw ArgumentError("Derived key length must be greater than or equal to 1");
+       throw new ArgumentError("Derived key length must be greater than or equal to 1");
      }
 
      if(length > ((pow(2, 32) - 1) * hashLength)) {
