@@ -1,5 +1,5 @@
 "name" : "dart_pbkdf2"
-"version" : "0.2.1"
+"version" : "0.2.2"
 "author" : "Robin Harper <cabrel@zerklabs.com>"
 "description" : "PBKDF2 implementation in Dart"
 "homepage" : "https://github.com/cabrel/dart-pbkdf2"
